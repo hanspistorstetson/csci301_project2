@@ -92,23 +92,22 @@ int main (int argc, char** argv) {
     s = (n >= c * (id + 1)) ? c : n - c * id;
     bubblesort(chunk, s);
 
-    for (step = 1; step < p; step = step * 2) {
-        if (id % (2*step) != 0) {
-            MPI_Send(chunk, s, MPI_INT, id - step, 0, MPI_COMM_WORLD);
-            break;
-        }
-        if (id + step < p) {
-            o = (n >= c * (id+ 2 * step)) ? c * step : n - c * (id + step);
-
-            other = (int*) malloc(o * sizeof(int));
-            MPI_Recv(other, o, MPI_INT, id + step, 0, MPI_COMM_WORLD, &status);
-            data = merge(chunk, s, other, o);
-            free(chunk);
-            free(other);
-            chunk = data;
-            s = s + o;
-        }
+   for (step = 1; step < p; step = 2*step) {
+    if (id % (2*step)!=0) {
+      MPI_Send(chunk, s, MPI_INT, id-step, 0, MPI_COMM_WORLD);
+      break;
     }
+    if (id+step < p) {
+      o = (n >= c * (id+2*step)) ? c * step : n - c * (id+step);
+      other = (int *)malloc(o * sizeof(int));
+      MPI_Recv(other, o, MPI_INT, id+step, 0, MPI_COMM_WORLD, &status);
+      data = merge(chunk, s, other, o);
+      free(chunk);
+      free(other);
+      chunk = data;
+      s = s + o;
+    }
+  } 
 
     elapsed_time += MPI_Wtime();
 
