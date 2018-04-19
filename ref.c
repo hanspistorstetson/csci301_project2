@@ -12,7 +12,7 @@ void swap(int * v, int i, int j)
 }
 
 
-void bubblesort(int * v, int n)
+void bubblesort(int* v, int n)
 {
   int i, j;
   for (i = n-2; i >= 0; i--)
@@ -22,9 +22,9 @@ void bubblesort(int * v, int n)
 }
 
 
-int * merge(int * v1, int n1, int * v2, int n2)
+int* merge(int* v1, int n1, int* v2, int n2)
 {
-  int * result = (int *)malloc((n1 + n2) * sizeof(int));
+  int* result = (int*)malloc((n1 + n2) * sizeof(int));
   int i = 0;
   int j = 0;
   int k;
@@ -41,7 +41,7 @@ int * merge(int * v1, int n1, int * v2, int n2)
       result[k] = v1[i];
       i++;
     }
-    else { // v2[j] <= v1[i]
+    else {
       result[k] = v2[j];
       j++;
     }
@@ -66,7 +66,7 @@ int main(int argc, char ** argv)
   int i;
 
   if (argc!=3) {
-    fprintf(stderr, "Usage: mpirun -np <num_procs> %s <in_file> <out_file>\n", argv[0]);
+    fprintf(stderr, "Usage: mpirun -H <hosts> %s <in_file> <out_file>\n", argv[0]);
     exit(1);
   }
 
@@ -78,7 +78,7 @@ int main(int argc, char ** argv)
     file = fopen(argv[1], "r");
     fscanf(file, "%d", &n);
     c = n/p; if (n%p) c++;
-    data = (int *)malloc(p*c * sizeof(int));
+    data = (int*)malloc(p*c * sizeof(int));
     for (i = 0; i < n; i++)
       fscanf(file, "%d", &(data[i]));
     fclose(file);
@@ -91,9 +91,10 @@ int main(int argc, char ** argv)
 
   MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-  c = n/p; if (n%p) c++;
+  c = n/p;
+  if (n%p) c++;
 
-  chunk = (int *)malloc(c * sizeof(int));
+  chunk = (int*)malloc(c * sizeof(int));
   MPI_Scatter(data, c, MPI_INT, chunk, c, MPI_INT, 0, MPI_COMM_WORLD);
   free(data);
   data = NULL;
@@ -108,7 +109,7 @@ int main(int argc, char ** argv)
     }
     if (id+step < p) {
       o = (n >= c * (id+2*step)) ? c * step : n - c * (id+step);
-      other = (int *)malloc(o * sizeof(int));
+      other = (int*)malloc(o * sizeof(int));
       MPI_Recv(other, o, MPI_INT, id+step, 0, MPI_COMM_WORLD, &status);
       data = merge(chunk, s, other, o);
       free(chunk);
@@ -126,7 +127,7 @@ int main(int argc, char ** argv)
     for (i = 0; i < s; i++)
       fprintf(file, "%d\n", chunk[i]);
     fclose(file);
-    printf("Bubblesort %d ints on %d procs: %f secs\n", n, p, elapsed_time);
+    printf("Bubblesorting %d numbers on %d procs took %f secs\n", n, p, elapsed_time);
   }
 
   MPI_Finalize();
