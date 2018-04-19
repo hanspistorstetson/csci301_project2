@@ -1,0 +1,4 @@
+master slots=4
+Slave1 slots=4
+Slave2 slots=4
+Slave3 slots=4

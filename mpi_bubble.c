@@ -10,7 +10,7 @@ void swap(int* v, int i, int j) {
 
 void bubblesort(int* v, int n) {
     int i, j;
-    for (int i = n-2, i >= 0; i--) {
+    for (int i = n-2; i >= 0; i--) {
         for (j = 0; j <= i; j++) {
             if (v[j] > v[j+1]) {
                 swap(v, j, j+1);
@@ -114,9 +114,9 @@ int main (int argc, char** argv) {
 
     if (id == 0) {
         file = fopen(argv[2], "w");
-        fprint(file, "%d\n", s);
+        fprintf(file, "%d\n", s);
         for (int i = 0; i < s; i++) {
-            fprint(file, "%d\n", chunk[i]);
+            fprintf(file, "%d\n", chunk[i]);
         }
         fclose(file);
         printf("Bubblesort %d ints on %d procs: %f secs\n", n, p, elapsed_time);
