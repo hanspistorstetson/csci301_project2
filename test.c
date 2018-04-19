@@ -75,7 +75,7 @@ int main (int argc, char** argv) {
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
-    elapsed_time = MPI_Wtime();
+    elapsed_time = -MPI_Wtime();
 
     MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
@@ -83,44 +83,53 @@ int main (int argc, char** argv) {
     if (n%p) {
         c++;
     }
-    
-    chunk = (int*) malloc(c * sizeof(int));
-    MPI_Scatter(data, c, MPI_INT, chunk, c, MPI_INT, 0, MPI_COMM_WORLD);
-    free(data);
-    data = NULL;
+     // scatter data
+  chunk = (int *)malloc(c * sizeof(int));
+  MPI_Scatter(data, c, MPI_INT, chunk, c, MPI_INT, 0, MPI_COMM_WORLD);
+  free(data);
+  data = NULL;
 
-    s = (n >= c * (id + 1)) ? c : n - c * id;
-    bubblesort(chunk, s);
+  // compute size of own chunk and sort it
+  s = (n >= c * (id+1)) ? c : n - c * id;
+  bubblesort(chunk, s);
 
-   for (step = 1; step < p; step = 2*step) {
+  // up to log_2 p merge steps
+  for (step = 1; step < p; step = 2*step) {
     if (id % (2*step)!=0) {
+      // id is no multiple of 2*step: send chunk to id-step and exit loop
       MPI_Send(chunk, s, MPI_INT, id-step, 0, MPI_COMM_WORLD);
       break;
     }
+    // id is multiple of 2*step: merge in chunk from id+step (if it exists)
     if (id+step < p) {
+      // compute size of chunk to be received
       o = (n >= c * (id+2*step)) ? c * step : n - c * (id+step);
+      // receive other chunk
       other = (int *)malloc(o * sizeof(int));
       MPI_Recv(other, o, MPI_INT, id+step, 0, MPI_COMM_WORLD, &status);
+      // merge and free memory
       data = merge(chunk, s, other, o);
       free(chunk);
       free(other);
       chunk = data;
       s = s + o;
     }
-  } 
+  }
 
-    elapsed_time += MPI_Wtime();
+  // stop the timer
+  elapsed_time += MPI_Wtime();
 
-    if (id == 0) {
-        file = fopen(argv[2], "w");
-        fprintf(file, "%d\n", s);
-        for (i = 0; i < s; i++) {
-            fprintf(file, "%d\n", chunk[i]);
-        }
-        fclose(file);
-        printf("Bubblesort %d ints on %d procs: %f secs\n", n, p, elapsed_time);
-    }
-    MPI_Finalize();
-    return 0;
-}
+  // write sorted data to out file and print out timer
+  if (id == 0) {
+    file = fopen(argv[2], "w");
+    fprintf(file, "%d\n", s);   // assert (s == n)
+    for (i = 0; i < s; i++)
+      fprintf(file, "%d\n", chunk[i]);
+    fclose(file);
+    printf("Bubblesort %d ints on %d procs: %f secs\n", n, p, elapsed_time);
+    // printf("%d %2d %f\n", n, p, elapsed_time);
+  }
 
+  MPI_Finalize();
+  return 0;
+} 
