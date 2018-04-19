@@ -1,0 +1,46 @@
+Script started on Thu 19 Apr 2018 02:46:20 UTC
+[01;32mpi@master[00m:[01;34m~ $[00m time mpiexec -H master, [Kmag[Kster,master,master,,[KSa[Klave1Slave[K[K[K[K[Km[K,Slave2[K1,Slave1, [KSlave1,Slave2, [KSlave2,Slave2,Slave2,Slave3,Slave3,Slave3,Slave3 csci301-project2/m 
+mergesort        mpi_mergesort.c  
+[01;32mpi@master[00m:[01;34m~ $[00m time mpiexec -H master,master,master,master,Slave1,Slave1,Slave1,Slave1,Slave2,Slave2,Slave2,Slave2,Slave3,Slave3,Slave3,Slave3 csci301-project2/m ergesort 5
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Unsorted array: 2 3 0 3 0 
+
+Sorted array: 0 24 128 1995048900 1995048900 
+
+
+real	0m0.989s
+user	0m0.790s
+sys	0m0.250s
+[01;32mpi@master[00m:[01;34m~ $[00m exit
+exit
+
+Script done on Thu 19 Apr 2018 02:47:48 UTC
