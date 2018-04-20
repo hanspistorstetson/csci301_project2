@@ -1,6 +1,6 @@
 import random
 
-N = 1000
+N = 100
 
 
 l = [random.randint(0, 1000) for r in xrange(N)]
